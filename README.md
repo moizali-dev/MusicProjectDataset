@@ -11,7 +11,7 @@
 
 # Challenges and Solutions
 
-- Spotify API token access expires in an hour. How can it be automatically refreshed especially in the middle of the code?
+- Spotify API token access expires in an hour
     - https://stackoverflow.com/questions/65435932/spotify-api-authorization-code-flow-with-python
     - Created a Class script that updates the env variable in a set amount of time i.e. every 15mins it will be updated
     - The class also has a method to update the token right before the script begins (so that user doesnt have to do it manually)
@@ -22,4 +22,10 @@
 - Integrating dbt to airflow
     - Had to pass the ~/.dbt/profile and change the ENV DBT to the path where the file can be found
 - When the sleep method is called on a 429 response then the code skips that `track_id`. It should come back to the same `track_id` again
+- If the `music_classification_main.py` fails then all the information gathered so far is lost
+
+# Experiments
+
+- Test out batch API calls instead of iterating through each track one by one
+- Can each DAG be one playlist and run in parallel?
 
