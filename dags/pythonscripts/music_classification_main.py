@@ -10,15 +10,15 @@ from pythonscripts.utils.spotifyclient import SpotifyClient
 from pythonscripts.utils.tokenupdate import TokenUpdate
 from pythonscripts.utils.gbq import BigQuery
 
-def main():
+def main(categories_lst = []):
     # Get the token from the link here: https://developer.spotify.com/console/get-playlist/?playlist_id=&market=&fields=&additional_types=
     startTime = datetime.now()
 
-    sc = SpotifyClient(os.environ["SPOTIFY_TOKEN"],os.environ["SPOTIFY_USER"])
     tu = TokenUpdate(os.environ["CLIENT_ID"], os.environ["CLIENT_SECRET"], datetime.now())
     tu.update_token(firsttime="Yes")
+    sc = SpotifyClient(os.environ["SPOTIFY_TOKEN"],os.environ["SPOTIFY_USER"])
 
-    categories_lst = ["Rock" ,"Pop","Country","Hip-Hop","R&B","Indie","Jazz","Soul","Dance/Electronic","Sleep","Metal"]
+    categories_lst = ["Rock" ,"Pop","Country","Hip-Hop","R&B","Indie","Jazz","Soul","Dance/Electronic","Sleep","Metal","Blues"]
     df = pd.DataFrame()
 
     # Track list from Dim_Track model
@@ -35,12 +35,11 @@ def main():
     ## Start of query
 
     categories = sc.get_categories()
-    # print([(c.name, c.id) for c in categories])
     for category in categories:
         if category.name in categories_lst:
 
             # Get playlists for the category
-            playlists = sc.get_categories_playlist(category.id, 20)
+            playlists = sc.get_categories_playlist(category.id, 50)
 
             # Get tracks for the playlist
             for playlist in playlists:
