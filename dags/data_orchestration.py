@@ -20,6 +20,7 @@ now = datetime.now()
 default_args = {
     "start_date": datetime(2022, 11, 18,2),
     "retries": 1,
+    'retry_delay': timedelta(minutes=1)
 }
 
 def upload_to_gcs(bucket, object_name, local_file):
@@ -38,7 +39,7 @@ def upload_to_gcs(bucket, object_name, local_file):
     blob.upload_from_filename(local_file)
 
 with DAG(
-    dag_id="MusicPipeline",
+    dag_id="MusicalPipeline",
     schedule_interval="@daily",
     default_args=default_args,
     catchup=False,
@@ -52,7 +53,7 @@ with DAG(
     )
 
     local_to_gcs_task = PythonOperator(
-        task_id="local_to_gcs_task",
+        task_id="local_to_gcs",
         python_callable=upload_to_gcs,
         op_kwargs={
             "bucket": BUCKET,
@@ -62,10 +63,10 @@ with DAG(
     )
 
     load_csv = GCSToBigQueryOperator(
-    task_id='gcs_to_bigquery_example',
+    task_id='gcs_to_bigquery',
     bucket=BUCKET,
     source_objects=f"dataset_{now.year}_{now.month}_{now.day}",
-    destination_project_dataset_table="musicprojects.musicprojects_staging.testtable",
+    destination_project_dataset_table=f"musicprojects.musicprojects_staging.dataset_{now.year}_{now.month}_{now.day}",
     autodetect=True,
     skip_leading_rows=1,
     source_format="CSV",
