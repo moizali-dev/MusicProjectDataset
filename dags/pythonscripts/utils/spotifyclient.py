@@ -44,8 +44,6 @@ class SpotifyClient:
         url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks" 
         response = self._place_get_api_request(url)
         response_json = response.json()
-        with open('data.json', 'w') as f:
-            json.dump(response_json, f)
         tracks = [Track(track["track"]["name"], track["track"]["id"], track["track"]["artists"][0]["name"]) for
                   track in response_json["items"]]
         return tracks
