@@ -1,0 +1,39 @@
+version: 2
+
+models:
+  - name: Dim_Tracks
+    columns:
+      - name: track_id
+        tests:
+          - unique
+          - not_null
+      - name: Name
+        tests:
+          - not_null
+      - name: Artist
+        tests:
+          - not_null
+
+  - name: Dim_Playlists
+    columns:
+      - name: Playlist_Id
+        tests:
+          - unique
+          - not_null
+      - name: Playlist_name
+        tests:
+          - unique
+          - not_null
+
+  - name: Dim_Tracks_All
+    columns:
+      - name: track_id
+        tests:
+          - unique
+          - not_null
+      - name: Name
+        tests:
+          - not_null
+      - name: Artist
+        tests:
+          - not_null

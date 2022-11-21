@@ -1,0 +1,3 @@
+Select playlist_Id, category_id, min(created_at) as created_at
+from musicprojects_analytics_staging.Stage_Dim_Playlist_Category_Relationship
+group by playlist_Id, category_id
