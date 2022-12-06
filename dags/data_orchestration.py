@@ -1,6 +1,7 @@
 import os
 import logging
 from datetime import datetime, timedelta
+import pendulum
 
 from airflow import DAG
 from airflow.utils.dates import days_ago
@@ -15,10 +16,11 @@ from pythonscripts.music_classification_main import main
 PROJECT_ID = os.environ.get("GCP_PROJECT_ID")
 BUCKET = os.environ.get("GCP_GCS_BUCKET")
 
-now = datetime.now()
+now = datetime.now().strftime("%Y_%m_%d")
+local_tz = pendulum.timezone("Europe/Amsterdam")
 
 default_args = {
-    "start_date": datetime(2022, 11, 18,2),
+    "start_date": pendulum.datetime(2022, 11, 18,2, tz="America/Toronto"),
     "retries": 1,
     'retry_delay': timedelta(minutes=1)
 }
@@ -57,7 +59,7 @@ with DAG(
         python_callable=upload_to_gcs,
         op_kwargs={
             "bucket": BUCKET,
-            "object_name": f"dataset_{now.year}_{now.month}_{now.day}",
+            "object_name": f"dataset_{now}",
             "local_file": "Music_Classification_Dataset_test_new.csv",
         },
     )
