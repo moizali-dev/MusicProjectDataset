@@ -18,7 +18,7 @@ def main(categories_lst = []):
     tu.update_token(firsttime="Yes")
     sc = SpotifyClient(os.environ["SPOTIFY_TOKEN"],os.environ["SPOTIFY_USER"])
 
-    categories_lst = ["Rock" ,"Pop","Country","Hip-Hop","R&B","Indie","Jazz","Soul","Dance/Electronic","Sleep","Metal","Blues"]
+    categories_lst = ["Rock" ,"Pop","Country","Hip-Hop","R&B","Indie","Jazz","Soul","Dance/Electronic","Sleep","Metal"]
     df = pd.DataFrame()
 
     # Track list from Dim_Track model
@@ -39,46 +39,50 @@ def main(categories_lst = []):
         if category.name in categories_lst:
 
             # Get playlists for the category
-            playlists = sc.get_categories_playlist(category.id, 50)
+            try:
+                playlists = sc.get_categories_playlist(category.id, 40)
 
-            # Get tracks for the playlist
-            for playlist in playlists:
+                # Get tracks for the playlist
+                for playlist in playlists:
 
-                try:  
+                    try:  
 
-                    # update token
-                    tu.update_token()
+                        # update token
+                        tu.update_token()
+                        
+                        sc._set_authorization_token(os.environ["SPOTIFY_TOKEN"])
+
+                        # get tracks
+                        print(f"Working on {playlist.name} and genre: {category.name}")
+                        track_lst = sc.get_playlist_tracks(playlist.id)
+
+                        for trackLst in track_lst:
+
+                            if trackLst.id not in tracks_lst:
+                                print(f"Working on {playlist.name} and genre: {category.name} and tracklst: {trackLst}")
+                                result = sc.get_track_features(trackLst.id)
+                                temp_df = pd.DataFrame(result, index=['i',])
+                                temp_df["category"] = category.name
+                                temp_df["category_id"] = category.id
+                                temp_df["Name"] = trackLst.name
+                                temp_df["Artist"] = trackLst.artist
+                                temp_df["Playlist_Id"] = playlist.id
+                                temp_df["Playlist_name"] = playlist.name
+                                temp_df["created_at"] = datetime.now()
+
+                                if df.empty:
+                                    df = temp_df
+                                else:
+                                    df = pd.concat([df,temp_df])  
                     
-                    sc._set_authorization_token(os.environ["SPOTIFY_TOKEN"])
+                    except Exception as e: 
+                        print(e)
+                        print(f"FAILED -- Playlist Name: {playlist.name}, Playlist ID: {playlist.id} and Genre: {category.name}")
+                        pass
 
-                    # get tracks
-                    print(f"Working on {playlist.name} and genre: {category.name}")
-                    track_lst = sc.get_playlist_tracks(playlist.id)
-
-                    for trackLst in track_lst:
-
-                        if trackLst.id not in tracks_lst:
-                            print(f"Working on {playlist.name} and genre: {category.name} and tracklst: {trackLst}")
-                            result = sc.get_track_features(trackLst.id)
-                            temp_df = pd.DataFrame(result, index=['i',])
-                            temp_df["category"] = category.name
-                            temp_df["category_id"] = category.id
-                            temp_df["Name"] = trackLst.name
-                            temp_df["Artist"] = trackLst.artist
-                            temp_df["Playlist_Id"] = playlist.id
-                            temp_df["Playlist_name"] = playlist.name
-                            temp_df["created_at"] = datetime.now()
-
-                            if df.empty:
-                                df = temp_df
-                            else:
-                                df = pd.concat([df,temp_df])  
-                
-                except Exception as e: 
-                    print(e)
-                    print(f"FAILED -- Playlist Name: {playlist.name}, Playlist ID: {playlist.id} and Genre: {category.name}")
-                    pass
-
+            except Exception as e:
+                print(e)
+                print(f"FAILED -- Playlist Name: {playlist.name}")
                 print(df.shape)
 
     df.to_csv("Music_Classification_Dataset_test_new.csv", index=False)
