@@ -67,8 +67,8 @@ with DAG(
     load_csv = GCSToBigQueryOperator(
     task_id='gcs_to_bigquery',
     bucket=BUCKET,
-    source_objects=f"dataset_{now.year}_{now.month}_{now.day}",
-    destination_project_dataset_table=f"musicprojects.musicprojects_staging.dataset_{now.year}_{now.month}_{now.day}",
+    source_objects=f"dataset_{now}",
+    destination_project_dataset_table=f"musicprojects.musicprojects_staging.dataset_{now}",
     autodetect=True,
     skip_leading_rows=1,
     source_format="CSV",
