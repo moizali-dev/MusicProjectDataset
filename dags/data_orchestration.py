@@ -41,7 +41,7 @@ def upload_to_gcs(bucket, object_name, local_file):
     blob.upload_from_filename(local_file)
 
 with DAG(
-    dag_id="MusicalPipeline",
+    dag_id="MusicalOrchestration",
     schedule_interval="@daily",
     default_args=default_args,
     catchup=False,

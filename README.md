@@ -1,7 +1,6 @@
 # Data Requirements
 
 - Music features by Genre
-- Can be static or add more songs with a date stamp
 
 # Learning
 - Created an OOP class for Spotify API and Spotify Token Update

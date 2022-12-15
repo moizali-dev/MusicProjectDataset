@@ -143,7 +143,7 @@ class SpotifyClient:
         print(response_json)
 
     def get_categories(self):
-        url = f"https://api.spotify.com/v1/browse/categories?country=CA&offset=0&limit=50"
+        url = f"https://api.spotify.com/v1/browse/categories?limit=50"
         response = self._place_get_api_request(url)
         response_json = response.json()
         categories = [Categories(categories["name"], categories["id"]) for
