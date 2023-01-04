@@ -2,6 +2,7 @@ import os
 import logging
 from datetime import datetime, timedelta
 import pendulum
+from pytz import timezone
 
 from airflow import DAG
 from airflow.utils.dates import days_ago
@@ -16,7 +17,8 @@ from pythonscripts.music_classification_main import main
 PROJECT_ID = os.environ.get("GCP_PROJECT_ID")
 BUCKET = os.environ.get("GCP_GCS_BUCKET")
 
-now = datetime.now().strftime("%Y_%m_%d")
+tz = timezone('EST')
+now = datetime.now(tz).strftime("%Y_%m_%d")
 local_tz = pendulum.timezone("America/Toronto")
 
 default_args = {
