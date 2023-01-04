@@ -17,12 +17,11 @@ PROJECT_ID = os.environ.get("GCP_PROJECT_ID")
 BUCKET = os.environ.get("GCP_GCS_BUCKET")
 
 now = datetime.now().strftime("%Y_%m_%d")
-local_tz = pendulum.timezone("Europe/Amsterdam")
+local_tz = pendulum.timezone("America/Toronto")
 
 default_args = {
     "start_date": pendulum.datetime(2022, 11, 18,2, tz="America/Toronto"),
-    "retries": 1,
-    'retry_delay': timedelta(minutes=1)
+    "retries": 1
 }
 
 def upload_to_gcs(bucket, object_name, local_file):
@@ -42,7 +41,7 @@ def upload_to_gcs(bucket, object_name, local_file):
 
 with DAG(
     dag_id="MusicalOrchestration",
-    schedule_interval="@daily",
+    schedule_interval="@weekly",
     default_args=default_args,
     catchup=False,
     max_active_runs=1,
